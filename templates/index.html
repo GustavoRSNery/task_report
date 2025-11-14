@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auditoria Hyperautomation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+<body>
+    <div id="page-loader">
+        <span>Processando...</span>
+    </div>
+
+    <main>
+        <h1>Auditoria de Tasks (CoE)</h1>
+        <p>Dados da última execução. Clique no botão para forçar uma nova atualização.</p>
+
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <button type="button" id="run-button">Rodar Extração Agora</button>
+            <div id="status-box">
+                Status: <span id="status-message">Idle</span>
+            </div>
+        </div>
+        <hr>
+
+        <div id="view-controls">
+            <h2>Resultados ({{ tasks | length }} tasks)</h2>
+            
+            <div id="column-controls-wrapper">
+                <button type="button" id="toggle-columns-btn">Exibir/Ocultar Colunas ▼</button>
+                
+                <div id="column-toggles" style="display: none;">
+                    <label><input type="checkbox" checked data-col="col-status"> Status</label>
+                    <label><input type="checkbox" checked data-col="col-id"> ID</label>
+                    <label><input type="checkbox" checked data-col="col-title"> Título</label>
+                    <label><input type="checkbox" checked data-col="col-assigned"> Assigned To</label>
+                    <label><input type="checkbox" checked data-col="col-state"> State</label>
+                    <label><input type="checkbox" checked data-col="col-tags"> Tags</label>
+                    <label><input type="checkbox" checked data-col="col-iteration"> Iteration Path</label>
+                    <label><input type="checkbox" checked data-col="col-parent"> Parent ID</label>
+                    <label><input type="checkbox" checked data-col="col-link"> Link SP?</label>
+                    <label><input type="checkbox" checked data-col="col-desc"> Desc. Complexa?</label>
+                    <label><input type="checkbox" checked data-col="col-anexos"> Anexos?</label>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <div id="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 150px;" class="col-status">Status</th>
+                    <th style="width: 150px;" class="col-id">ID</th>
+                    <th style="width: 500px;" class="col-title">Título</th>
+                    <th style="width: 200px;" class="col-assigned">Assigned To</th>
+                    <th style="width: 150px;" class="col-state">State</th>
+                    <th style="width: 200px;" class="col-tags">Tags</th>
+                    <th style="width: 300px;" class="col-iteration">Iteration Path</th>
+                    <th style="width: 150px;" class="col-parent">Parent ID</th>
+                    <th style="width: 150px;" class="col-link">Link SP?</th>
+                    <th style="width: 200px;" class="col-desc">Desc. Complexa?</th>
+                    <th style="width: 150px;" class="col-anexos">Anexos?</th>
+                </tr>
+
+                <tr id="filter-row">
+                    <th class="col-status"><select data-col="col-status"><option value="">Todos</option></select></th>
+                    <th class="col-id"><select data-col="col-id"><option value="">Todos</option></select></th>
+                    <th class="col-title"><select data-col="col-title"><option value="">Todos</option></select></th>
+                    <th class="col-assigned"><select data-col="col-assigned"><option value="">Todos</option></select></th>
+                    <th class="col-state"><select data-col="col-state"><option value="">Todos</option></select></th>
+                    <th class="col-tags"><select data-col="col-tags"><option value="">Todos</option></select></th>
+                    <th class="col-iteration"><select data-col="col-iteration"><option value="">Todos</option></select></th>
+                    <th class="col-parent"><select data-col="col-parent"><option value="">Todos</option></select></th>
+                    <th class="col-link"><select data-col="col-link"><option value="">Todos</option></select></th>
+                    <th class="col-desc"><select data-col="col-desc"><option value="">Todos</option></select></th>
+                    <th class="col-anexos"><select data-col="col-anexos"><option value="">Todos</option></select></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td class="col-status compliance-{{ 'ok' if task.Compliance == '✅ OK' else 'nok' }}">
+                        {{ task.Compliance }}
+                    </td>
+                    <td class="col-id">{{ task.ID }}</td>
+                    <td class="col-title">{{ task.Title }}</td>
+                    <td class="col-assigned">{{ task.Assigned_To }}</td>
+                    <td class="col-state">{{ task.State }}</td>
+                    <td class="col-tags">{{ task.Tags }}</td>
+                    <td class="col-iteration">{{ task.Iteration_Path }}</td>
+                    <td class="col-parent">{{ task.Parent_ID }}</td>
+                    <td class="col-link {{ 'kpi-ok' if task.KPI_Has_SharePoint_Link else 'kpi-nok' }}">
+                        {{ 'Sim' if task.KPI_Has_SharePoint_Link else 'Não' }}
+                    </td>
+                    <td class="col-desc {{ 'kpi-ok' if task.KPI_Has_Complex_Desc else 'kpi-nok' }}">
+                        {{ 'Sim' if task.KPI_Has_Complex_Desc else 'Não' }}
+                    </td>
+                    <td class="col-anexos {{ 'kpi-ok' if task.KPI_Has_Attachment else 'kpi-nok' }}">
+                        {{ 'Sim' if task.KPI_Has_Attachment else 'Não' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+</body>
+</html>

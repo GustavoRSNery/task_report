@@ -1,0 +1,173 @@
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    font-family: monospace;
+    display: none; 
+}
+body {
+    max-width: none; 
+    overflow-x: hidden; 
+}
+
+.compliance-ok { color: #4CAF50; }
+.compliance-nok { color: #F44336; font-weight: bold; }
+.kpi-ok { color: #76B947; }
+.kpi-nok { color: #FFA500; }
+th { text-align: left; }
+
+#status-box {
+    background-color: #333;
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-family: monospace;
+    display: none;
+}
+
+/* 1. Força a tabela a obedecer as larguras definidas no <th>
+    e não tentar se ajustar ao conteúdo. */
+#table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+}
+
+/* 2. Força a tabela a obedecer as larguras (e ter um scroll) */
+table {
+    table-layout: fixed;
+    width: 2500px; 
+    border-collapse: collapse;
+}
+
+/* 3. Esta é para delimitar altura fixa nas linhas.
+        Impede que o texto quebre a linha e adiciona "..." */
+th, td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative; 
+    border: 1px solid #333;
+    padding: 8px;
+}
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+.resizer:hover {
+    background-color: #007bff;
+}
+
+#view-controls {
+    /* Alinha o H2 e o wrapper do botão */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebrar a linha em telas menores */
+}
+
+#column-controls-wrapper {
+    /* Permite que o menu de dropdown apareça abaixo do botão */
+    position: relative;
+}
+
+#toggle-columns-btn {
+    margin: 0; /* Remove a margem padrão do water.css */
+}
+
+#column-toggles {
+    /* O menu dropdown flutuante */
+    display: none; /* Começa oculto (JS vai controlar) */
+    position: absolute;
+    right: 0;
+    top: 100%; /* Aparece logo abaixo do botão */
+    z-index: 100;
+    
+    /* Estilo */
+    background: #333; /* Fundo mais escuro */
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 15px;
+    
+    /* Layout dos checkboxes */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas de checkboxes */
+    gap: 10px;
+}
+
+#column-toggles label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* --- REGRAS (PASSO 2): VISIBILIDADE DAS COLUNAS --- */
+/* O JS vai adicionar a classe 'hide-col-id' no <table>
+  e este CSS fará o resto.
+*/
+table.hide-col-status .col-status,
+table.hide-col-id .col-id,
+table.hide-col-title .col-title,
+table.hide-col-assigned .col-assigned,
+table.hide-col-state .col-state,
+table.hide-col-tags .col-tags,
+table.hide-col-iteration .col-iteration,
+table.hide-col-parent .col-parent,
+table.hide-col-link .col-link,
+table.hide-col-desc .col-desc,
+table.hide-col-anexos .col-anexos {
+    display: none;
+}
+
+/* --- REGRAS (PASSO 5): VISIBILIDADE DAS COLUNAS --- */
+
+/* Esta é a nossa nova classe "mágica" para ocultar.
+   O JS vai aplicá-la a todos os <th> e <td> da coluna. */
+.col-hidden {
+    /* Força a largura para 0 e esconde o conteúdo */
+    width: 0px !important; /* !important é necessário para sobrepor o style="width: 150px;" */
+    min-width: 0px !important;
+    max-width: 0px !important;
+    
+    /* Esconde o texto e bordas */
+    padding: 0 2px !important; /* Mantém um padding mínimo para o layout não quebrar */
+    border-width: 0 0 0 0; /* Esconde todas as bordas */
+    visibility: hidden;
+    overflow: hidden;
+    
+    /* Faz a "mágica" de desaparecer */
+    transition: all 0.2s ease-out;
+}
+
+/* Esconde o 'resizer' quando a coluna estiver oculta */
+.col-hidden .resizer {
+    display: none;
+    visibility: hidden;
+}
+
+/* Esconde o <select> do filtro quando a coluna estiver oculta */
+.col-hidden select {
+    display: none;
+}

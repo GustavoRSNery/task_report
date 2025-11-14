@@ -1,0 +1,11 @@
+requests
+pandas
+pydantic
+pydantic-settings
+python-dotenv
+beautifulsoup4
+lxml
+tabulate
+fastapi
+uvicorn[standard]
+jinja2
